@@ -1,27 +1,38 @@
-var quizContainer = document.getElementById('quiz');
-var resultsContainer = document.getElementById('results');
-var submitButton = document.getElementById('submit');
+//variables to reference DOM elements
+const quizContainer = document.getElementById("quiz");
+const resultsContainer = document.getElementById("results");
+const submitButton = document.getElementById("submit");
+
+function buildQuiz(){
+    const output = [];
+
+    myQuestions.forEach(
+        (currentQuestion, questionNumber) => {
+            const answers = [];
+
+            for (letter in currentQuestion.answers) {
+                answers.push(
+                   <label
+                    input type="radio" name="question${questionNumber}" value="${letter}">
+                    ${letter} :
+                    ${currentQuestion.answers[letter]}
+                    </label>
+                    );
+            }
+        
+
+    
 
 
+function showResults(){}
 
-function startQuiz(){
-      questionContainer.style.display="block";
-      startButton.style.display="none";
-      isWin = false;
-      timerCount = 150;
-      startTimer()
-    }
+// display quiz right away
+buildQuiz();
 
+// on submit, show results
+submitButton.addEventListener('click', showResults);
 
-
-
-
-
-
-
-
-
-var questions = [
+const myQuestions = [
     {
       question: "He's just a little rabbit. What's he gonna do?",
       answers: {
@@ -73,4 +84,3 @@ var questions = [
       correctAnswer: "a"
     }]
 
-  createQuiz();
