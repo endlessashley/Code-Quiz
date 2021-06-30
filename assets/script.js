@@ -15,7 +15,7 @@ const questions = [
         { text: "Gwyneth Paltrow's Head", correct: true },
         { text: "Brad Pitt's head", correct: false },
         { text: "*bursts into tears*", correct: false },
-        {text: "A sandwich", correct: false },
+        { text: "A sandwich", correct: false },
       ]
     },
     {
@@ -69,19 +69,22 @@ function startGame() {
 function startTimer() {
     timerCount = 90;
           var timerInterval = setInterval(function() {
-            timerCount--;
             timerElement.textContent = timerCount;
             
-            if (timerCount <= 0) {
-                clearInterval(timerInterval);
-                timerCount = 0
-                endQuiz ();
-            }
-         
-            else if (question === currentQuestionIndex.length) {
+            if (question === currentQuestionIndex.length) {
+              score = timerCount
+              console.log(score)
               clearInterval(timer);
               endquiz();
             }
+            
+            else if (timerCount <= 0) {
+                clearInterval(timerInterval);
+                timerCount = 0
+                endQuiz ();
+                score = 0
+            }
+         
 
             else {timerCount--; }
           
@@ -128,21 +131,29 @@ function selectAnswer(e) {
   setStatusClass(document.body, correct)
   Array.from(answerButtonsElement.children).forEach(button => {
     setStatusClass(button, button.dataset.correct)
+    console.log(selectedButton.dataset)
+    console.log(currentQuestionIndex)
+    console.log(question.length)
   })
   if (shuffledQuestions.length > currentQuestionIndex + 1) {
     nextButton.classList.remove('hide')
   } else {
-    startButton.innerText = 'Restart'
+    //startButton.innerText = 'Restart'
     startButton.classList.remove('hide')
+  }
+  function checkResult () {
+    let correctChecker = correct
+    console.log(correct)
+    console.log(correctChecker)
+      if (!correct) {
+        console.log("check")
+          timerCount -= 10
+      }
   }
   checkResult()
 }
 
-function checkResult (correct) {
-    if (correct == false) {
-        timerCount -= 10
-    }
-}
+
 
 //change incorrect answers to red and correct answers to blue
 function setStatusClass(element, correct) {
@@ -181,62 +192,27 @@ function displayHighscores() {
       $('#highscoreList').append("<li class='score'>" + values[i].initials + " - " + values[i].score + "</li>")
   }
 }
-$('#submitBtn').click(function(event) {
+document.querySelector(".submitBtn").addEventListener("click", function(event) {
       event.preventDefault();
-      // save timeTracker as score in an object
-      var user = {
-      initials: $('#initials').val(),
-      score: timerCount
-      };
-
-      // put the object in localStorage, use input as key
-      localStorage.setItem(JSON.stringify(initials.value), JSON.stringify(user));
-  }
-)
-
-
-//var emailInput = document.querySelector("#email");
-//var passwordInput = document.querySelector("#password");
-//var signUpButton = document.querySelector("#sign-up");
-//var msgDiv = document.querySelector("#msg");
-//var userEmailSpan = document.querySelector("#user-email");
-//var userPasswordSpan = document.querySelector("#user-password");
-
-
-//renderLastRegistered();
-
-//function displayMessage(type, message) {
-  //msgDiv.textContent = message;
-  //msgDiv.setAttribute("class", type);
-//}
-
-//function renderLastRegistered() {
-  //var email = localStorage.getItem("email");
-  //var password = localStorage.getItem("password");
-
-  //if (!email || !password) {
-    //return;
-  //}
-
-  //userEmailSpan.textContent = email;
-  //userPasswordSpan.textContent = password;
-//}
-
-///signUpButton.addEventListener("click", function(event) {
- //event.preventDefault();
-
-  //var email = document.querySelector("#email").value;
-  //var password = document.querySelector("#password").value;
-
-  //if (email === "") {
-    //displayMessage("error", "Email cannot be blank");
-  //} else if (password === "") {
-    //displayMessage("error", "Password cannot be blank");
-  //} else {
-    //displayMessage("success", "Registered successfully");
-
-    //localStorage.setItem("email", email);
-    //localStorage.setItem("password", password);
-    //renderLastRegistered();
-  //}
-//});
+       displayHighscores() {
+        // Clear highscores (otherwise you append to existing ol)
+        $('#highscoreList').empty();
+    
+        // Prebaked algorithm for taking everything out of local storage
+        var values = [],
+        keys = Object.keys(localStorage),
+        i = keys.length;
+    
+        while(i--) {
+            values.push(JSON.parse(localStorage.getItem(keys[i])))
+        }
+    
+        // Sort from highest score to lowest
+        values.sort((a, b) => (a.score > b.score) ? -1 : 1)
+    
+        console.log(values);
+        for(var i = 0; i < values.length; i++) {
+            // Creates <li> for each entry in localstorage
+            $('#highscoreList').append("<li class='score'>" + values[i].initials + " - " + values[i].score + "</li>")
+        }
+    }
